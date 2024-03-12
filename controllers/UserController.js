@@ -1,4 +1,4 @@
-const UserModel = require('../models/User')
+const UserModel = require('../models/user')
 const cloudinary = require('cloudinary').v2;
 const bcrypt = require('bcrypt');
 cloudinary.config({

@@ -86,7 +86,37 @@ class UserController {
             console.log(error)
         }
     }
-
+    static loginUser = async (req, res) => {
+        try {
+            // console.log(req.body)
+            const { email, password } = req.body
+            // console.log(password)
+            if (email && password) {
+                const user = await UserModel.findOne({ email: email })
+                // console.log(user)
+                if (user != null) {
+                    const isMatched = await bcrypt.compare(password, user.password)
+                    if ((user.email === email) && isMatched) {
+                        //generate jwt token
+                        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET_KEY);
+                        // console.log(token)
+                        res.cookie('token', token)
+                        res
+                            .status(201)
+                            .json({ status: "success", message: "Login successfully with web token 😃🍻", token, user });
+                    } else {
+                        res.status(401).json({ status: "failed", message: "'Email and Password is not valid !😓" });
+                    }
+                } else {
+                    res.status(401).json({ status: "failed", message: "'You are not registered user😓" });
+                }
+            } else {
+                res.status(401).json({ status: "failed", message: "'All Fields are required 😓" });
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
 
 
 
